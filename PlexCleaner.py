@@ -25,6 +25,7 @@ Host = ""  # IP Address of the Plex Media Server, by default 127.0.0.1 will be u
 Port = ""  # Port of the Plex Media Server, by default 32400 will be used
 SectionList = []  # Sections to clean. If empty all sections will be looked at, the section id should be used here which is the number found be in the url on PlexWeb after /section/[ID]
 IgnoreSections = []  # Sections to skip cleaning, for use when Settings['SectionList'] is not specified, the same as SectionList, the section id should be used here
+IgnoreCollections = [] # Collections to skip cleaning.  The section id for every item is logged during running - the easiest way to find a collection id is to run PlexCleaner with --test
 LogFile = ""  # Location of log file to save console output
 LogFileMode = "overwrite"  # File Mode for logging, overwrite or append, default is overwrite
 trigger_rescan = False  # trigger_rescan will rescan a section if changes are made to it
@@ -312,6 +313,7 @@ def LoadSettings(opts):
     s['Port'] = opts.get('Port', Port)
     s['SectionList'] = opts.get('SectionList', SectionList)
     s['IgnoreSections'] = opts.get('IgnoreSections', IgnoreSections)
+    s['IgnoreCollections'] = opts.get('IgnoreCollections', IgnoreCollections)
     s['LogFile'] = opts.get('LogFile', LogFile)
     s['LogFileMode'] = opts.get('LogFileMode', LogFileMode)
     s['trigger_rescan'] = opts.get('trigger_rescan', trigger_rescan)
@@ -563,7 +565,6 @@ def getMediaInfo(VideoNode):
         d2 = datetime.datetime.fromtimestamp(float(lastViewedAt))
         DaysSinceVideoLastViewed = (d1 - d2).days
     ################################################################
-    ################################################################
     ###Find number of days between date video was added and today
     addedAt = VideoNode.getAttribute("addedAt")
     if addedAt == '':
@@ -776,6 +777,12 @@ def checkShow(showDirectory):
     media_container = show.getElementsByTagName("MediaContainer")[0]
     show_id = media_container.getAttribute('key')
     show_name = media_container.getAttribute('parentTitle')
+    for collection in collections:
+        collection_id = collection.getAttribute('id')
+        log(show_name + " is in collection_id " + collection_id)
+        if int(collection_id) in Settings['IgnoreCollections']:
+            log("IGNORING: " + show_name + " is in ignored collection_id " + collection_id)
+            return 0
     for key in Settings['ShowPreferences']:
         if (key.lower() in show_name.lower()) or (key == show_id):
             show_settings.update(Settings['ShowPreferences'][key])

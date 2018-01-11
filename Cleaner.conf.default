@@ -3,6 +3,7 @@
   "Port": "32400",
   "SectionList": [],
   "IgnoreSections": [],
+  "IgnoreCollections": [],
   "LogFile": "",
   "LogFileMode": "",
   "trigger_rescan": false,
