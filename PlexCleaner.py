@@ -15,6 +15,7 @@
 # Version 1.96 - Modified files are printed at the end of the log as well now.
 # Version 2.0 - Added ability to email log summary thanks to stevenflesch
 # Version 2.01 - Email log only when action completed by default, calculate sizes of files changed
+# Version 2.1 - Add ignored collections
 
 ## Config File ###########################################################
 # All settings in the config file will overwrite the settings here
